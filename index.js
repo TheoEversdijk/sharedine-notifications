@@ -1,32 +1,20 @@
-import express from "express"
-import dotenv from "dotenv"
+import express from 'express';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
 import cors from "cors";
-// import friendRouter from "./routes/friendRouter.js";
-dotenv.config({path: '.env'})
-
-const domainsFromEnv = process.env.CORS_DOMAINS || ""
-const port = process.env.PORT || 3005
-
-const whitelist = domainsFromEnv.split(",").map(item => item.trim())
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new Error("Not allowed by CORS"))
-        }
-    },
-    credentials: true,
-}
+import notify from './routes/notify.js';
 
 const app = express();
 
+// support json encoded and url-encoded bodies, mainly used for post and update
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors("Access-Control-Allow-Origin: *"))
 
-app.get('/', (req, res) => res.status(200).send("ShareDine NotificationsAPI"))
+app.use('/', notify);
 
-// app.use("/friends", cors(), friendRouter)
-
-app.listen(3005)
+app.set('port', process.env.PORT || 3005);
+const server = app.listen(app.get('port'), () => {
+  console.log(`🍿 Express running → PORT ${server.address().port}`);
+});

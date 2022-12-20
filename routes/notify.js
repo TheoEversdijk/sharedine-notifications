@@ -1,14 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
-dotenv.config();
+import { registerNotification, removeNotification, editNotification } from "../controllers/notifyController.js"
 
 const router = express.Router();
 
-// import { function } from "../controllers/notifyController.js"
-
-/**
- * All notification router
- */
 router.options('/', (req, res, next) => {
     res.header({
         allow: 'GET, POST, OPTIONS', 
@@ -19,6 +13,12 @@ router.options('/', (req, res, next) => {
     res.sendStatus(200);
 });
 
-// router.get('/', getFunction)
+router.get('/', (req, res, next) => {
+    res.json('Connection with notifications microservice made');
+  });
 
-export default router
+router.get('/register', registerNotification)
+router.get('/remove', removeNotification)
+router.get('/edit', editNotification)
+
+export default router;

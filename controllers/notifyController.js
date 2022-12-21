@@ -1,18 +1,17 @@
 import nodemailer from 'nodemailer';
 import * as dotenv from 'dotenv';
+import hbs from "nodemailer-express-handlebars";
+import * as path from 'path';
 dotenv.config({ path: '.env' });
 
 // Email for when a user registers for an appointment.
 // This returns an email with the appointment the user has registered for
 export async function registerNotification(req, res, next) {
-    const msg = {
-        from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: "ever0045@hz.nl",
-        subject: "You've registered yourself for <appointment>",
-        text: 'You have succesfully registered yourself for the following appointment: <appointment>'
-    };
-    
-    nodemailer.createTransport({
+
+
+    console.log(req.query.email)
+
+    let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: process.env.gmail_email,
@@ -20,11 +19,28 @@ export async function registerNotification(req, res, next) {
         },
         port: 465,
         host: 'smtp.gmail.com'
-    })
+    });
+
+    transporter.use('compile', hbs({
+        viewEngine: {
+            extName: ".handlebars",
+            defaultLayout: false
+        },
+        viewPath: path.resolve('./views') 
+    }))
     
-    .sendMail(msg, (err )=>{
+    const msg = {
+        from: '"ShareDine" <sharedine.noreply@gmail.com>',
+        to: `${req.query.email}`, // TODO: MAKE THIS USER EMAIL
+        subject: "Registration Confirmation",
+        template: 'register'
+    };
+
+    
+    transporter.sendMail(msg, (err )=>{
         if (err) {
             //return console.log('Error occurs', err);
+            console.log(err)
             res.json('Error occured')
         } else {
             //return console.log('Email sent');
@@ -36,14 +52,7 @@ export async function registerNotification(req, res, next) {
 // Email for when a appointment has been canceled
 // The user gets an email about the cancelation of an appointment
 export async function removeNotification(req, res, next) {
-    const msg = {
-        from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: "",
-        subject: "<appointment> has been canceled",
-        text: 'too bad, better luck next time'
-    };
-    
-    nodemailer.createTransport({
+    let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: process.env.gmail_email,
@@ -51,14 +60,31 @@ export async function removeNotification(req, res, next) {
         },
         port: 465,
         host: 'smtp.gmail.com'
-    })
+    });
+
+    transporter.use('compile', hbs({
+        viewEngine: {
+            extName: ".handlebars",
+            defaultLayout: false
+        },
+        viewPath: path.resolve('./views') 
+    }))
     
-    .sendMail(msg, (err )=>{
+    const msg = {
+        from: '"ShareDine" <sharedine.noreply@gmail.com>',
+        to: "theo.eversdijk@gmail.com", // TODO: MAKE THIS USER EMAIL
+        subject: "An appointment has been removed",
+        template: 'remove'
+    };
+
+    
+    transporter.sendMail(msg, (err )=>{
         if (err) {
-            // return console.log('Error occurs', err);
+            //return console.log('Error occurs', err);
+            console.log(err)
             res.json('Error occured')
         } else {
-            // return console.log('Email sent');
+            //return console.log('Email sent');
             res.json('Email sent')
         }
     })
@@ -67,14 +93,7 @@ export async function removeNotification(req, res, next) {
 // Email for when an appointment has been edited.
 // The user gets an email about the appointment that has been edited.
 export async function editNotification(req, res, next) {
-    const msg = {
-        from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: "",
-        subject: "The contents of <appointment> have changed",
-        text: 'To see the changes please log in and open the appointment'
-    };
-    
-    nodemailer.createTransport({
+    let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: process.env.gmail_email,
@@ -82,14 +101,31 @@ export async function editNotification(req, res, next) {
         },
         port: 465,
         host: 'smtp.gmail.com'
-    })
+    });
+
+    transporter.use('compile', hbs({
+        viewEngine: {
+            extName: ".handlebars",
+            defaultLayout: false
+        },
+        viewPath: path.resolve('./views') 
+    }))
     
-    .sendMail(msg, (err )=>{
+    const msg = {
+        from: '"ShareDine" <sharedine.noreply@gmail.com>',
+        to: "theo.eversdijk@gmail.com", // TODO: MAKE THIS USER EMAIL
+        subject: "An appointment has been edited",
+        template: 'edit'
+    };
+
+    
+    transporter.sendMail(msg, (err )=>{
         if (err) {
-            // return console.log('Error occurs', err);
+            //return console.log('Error occurs', err);
+            console.log(err)
             res.json('Error occured')
         } else {
-            // return console.log('Email sent');
+            //return console.log('Email sent');
             res.json('Email sent')
         }
     })

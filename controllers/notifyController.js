@@ -8,9 +8,6 @@ dotenv.config({ path: '.env' });
 // This returns an email with the appointment the user has registered for
 export async function registerNotification(req, res, next) {
 
-
-    console.log(req.query.email)
-
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -31,9 +28,15 @@ export async function registerNotification(req, res, next) {
     
     const msg = {
         from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: `${req.query.email}`, // TODO: MAKE THIS USER EMAIL
-        subject: "Registration Confirmation",
-        template: 'register'
+        to: `${req.query.email}`,
+        subject: `Registration Confirmation`,
+        template: 'register',
+        context: {
+            appointment: req.query.appointment,
+            location: req.query.location,
+            date: req.query.date,
+            time: req.query.time
+        }
     };
 
     
@@ -52,6 +55,7 @@ export async function registerNotification(req, res, next) {
 // Email for when a appointment has been canceled
 // The user gets an email about the cancelation of an appointment
 export async function removeNotification(req, res, next) {
+
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -72,9 +76,15 @@ export async function removeNotification(req, res, next) {
     
     const msg = {
         from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: "theo.eversdijk@gmail.com", // TODO: MAKE THIS USER EMAIL
+        to: `${req.query.email}`,
         subject: "An appointment has been removed",
-        template: 'remove'
+        template: 'remove',
+        context: {
+            appointment: req.query.appointment,
+            location: req.query.location,
+            date: req.query.date,
+            time: req.query.time
+        }
     };
 
     
@@ -93,6 +103,7 @@ export async function removeNotification(req, res, next) {
 // Email for when an appointment has been edited.
 // The user gets an email about the appointment that has been edited.
 export async function editNotification(req, res, next) {
+
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -113,9 +124,15 @@ export async function editNotification(req, res, next) {
     
     const msg = {
         from: '"ShareDine" <sharedine.noreply@gmail.com>',
-        to: "theo.eversdijk@gmail.com", // TODO: MAKE THIS USER EMAIL
+        to: `${req.query.email}`,
         subject: "An appointment has been edited",
-        template: 'edit'
+        template: 'edit',
+        context: {
+            appointment: req.query.appointment,
+            location: req.query.location,
+            date: req.query.date,
+            time: req.query.time
+        }
     };
 
     
